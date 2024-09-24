@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TE QUIERO PULGA</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(to bottom, #ffcc99, #ff99cc, #cc99ff); /* Degradado romántico */
+            color: white;
+            font-family: 'Arial', sans-serif;
+        }
+
+        canvas {
+            border: 3px solid #ffffff;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <script>
+        let angle = 0;  // Ángulo de rotación de la flor
+        let stemAngle = 0;  // Ángulo del tallo para el balanceo
+        let pulse = 0;  // Variable para el efecto de pulsación del centro de la flor
+        let colorChangeTimer = 0;  // Temporizador para cambiar de color
+        let petalColors = ['#ff0000', '#ffffff', '#ffff00'];  // Colores: rojo, blanco, amarillo
+        let currentColorIndex = 0;  // Índice del color actual
+
+        function setup() {
+            createCanvas(800, 900);
+            noStroke();
+            drawTitle();
+        }
+
+        function draw() {
+            drawBackground();  // Dibujar el fondo
+            drawTitle();  // Dibujar el texto
+            drawStem();  // Dibujar el tallo
+            drawFlower();  // Dibujar la flor
+        }
+
+        function drawBackground() {
+            // Degradado de cielo desde el amanecer
+            let color1 = color(255, 204, 153); // Color del amanecer
+            let color2 = color(255, 153, 204); // Rosa suave
+            let color3 = color(204, 153, 255); // Púrpura suave
+
+            // Crear el degradado vertical
+            for (let y = 0; y < height; y++) {
+                let inter = map(y, 0, height, 0, 1);
+                let col = lerpColor(color1, color2, inter);
+                col = lerpColor(col, color3, inter);
+                stroke(col);
+                line(0, y, width, y);
+            }
+        }
+
+        function drawTitle() {
+            textAlign(CENTER);
+            textSize(42);
+            fill(255);
+            text("TE QUIERO PULGA", width / 2, 100);  // Texto centrado
+        }
+
+        function drawStem() {
+            fill(0, 255, 0);  // Verde para el tallo
+            push();  // Guardar el estado actual del lienzo
+            translate(width / 2, 400);  // Centro de la flor
+            rotate(sin(radians(stemAngle)) * 0.05);  // Balanceo suave del tallo
+            rect(-10, 0, 20, 400);  // Dibujar el tallo
+            pop();  // Restaurar el estado anterior del lienzo
+
+            stemAngle += 1;  // Incrementar el ángulo para balanceo
+        }
+
+        function drawFlower() {
+            push();  // Guardar el estado actual del lienzo
+            translate(width / 2, 400);  // Mover al centro del canvas
+            rotate(radians(angle));  // Rotar la flor entera
+
+            // Cambiar color cada 100 frames
+            if (frameCount % 100 === 0) {
+                currentColorIndex = (currentColorIndex + 1) % petalColors.length;  // Cambiar entre rojo, blanco y amarillo
+            }
+
+            // Dibujar los pétalos
+            for (let i = 0; i < 16; i++) {
+                for (let j = 0; j < 18; j++) {
+                    fill(petalColors[currentColorIndex]);  // Usar el color actual
+                    let petalSize = 50 + sin(radians(angle + i * 10)) * 5;  // Efecto de "latido" en los pétalos
+                    rotate(radians(24));  // Rotar para distribuir los pétalos
+                    ellipse(0, 150 - j * 6, petalSize, 150 - 6 * j);  // Dibujar pétalo con tamaño variable
+                }
+            }
+
+            // Efecto pulsante en el centro de la flor
+            let centerSize = 88 + sin(radians(pulse)) * 10;  // Pulsación
+            fill(255, 69, 0);  // Color naranja brillante
+            ellipse(0, 0, centerSize, centerSize);  // Centro de la flor
+
+            pop();  // Restaurar el estado del lienzo
+
+            // Actualizar los ángulos y valores para animación
+            angle += 0.5;  // Incrementar ángulo para rotación
+            pulse += 3;  // Incrementar el pulso del centro
+        }
+    </script>
+</body>
+</html>
